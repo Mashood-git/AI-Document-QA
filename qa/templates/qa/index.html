@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Document Q&A</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 700px;
+            max-width: 90%;
+            margin: 80px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #222;
+        }
+
+        p {
+            text-align: center;
+            color: #666;
+        }
+
+        .upload-box {
+            margin-top: 30px;
+            padding: 30px;
+            border: 2px dashed #aaa;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        input[type="file"] {
+            margin: 20px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .question {
+            margin-top: 30px;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .document-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .answer-box {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f0f7ff;
+            border-left: 5px solid #2563eb;
+            border-radius: 8px;
+        }
+
+        .answer-box p {
+            text-align: left;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🤖 AI Document Q&A</h1>
+
+    <p>Upload a PDF and ask questions about it.</p>
+
+
+    <!-- ========================================= -->
+    <!-- SUCCESS / ERROR MESSAGE -->
+    <!-- ========================================= -->
+
+    {% if message %}
+        <p class="success">
+            {{ message }}
+        </p>
+    {% endif %}
+
+
+    <!-- ========================================= -->
+    <!-- CURRENT DOCUMENT -->
+    <!-- ========================================= -->
+
+    {% if filename %}
+        <div class="document-info">
+
+            📄 <strong>Current Document:</strong>
+
+            {{ filename }}
+
+        </div>
+    {% endif %}
+
+
+    <!-- ========================================= -->
+    <!-- PDF UPLOAD -->
+    <!-- ========================================= -->
+
+    <div class="upload-box">
+
+        <h3>📤 Upload PDF</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <input
+                type="file"
+                name="document"
+                accept=".pdf"
+                required
+            >
+
+            <br>
+
+            <button type="submit">
+                Upload Document
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- ASK QUESTION -->
+    <!-- ========================================= -->
+
+    <div class="question">
+
+        <h3>💬 Ask a Question</h3>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="question"
+                placeholder="e.g. Where did Mashood complete his B.E.?"
+                required
+            >
+
+            <br><br>
+
+            <button type="submit">
+                Ask AI
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- AI ANSWER -->
+    <!-- ========================================= -->
+
+    {% if answer %}
+
+        <div class="answer-box">
+
+            <h2>🤖 AI Answer</h2>
+
+            <p>
+                {{ answer }}
+            </p>
+
+        </div>
+
+    {% endif %}
+
+    {% if sources %}
+
+    <div style="
+        margin-top: 20px;
+        padding: 20px;
+        background: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    ">
+
+        <h3>📚 Sources</h3>
+
+        {% for source, page in sources %}
+
+            <p style="
+                text-align: left;
+                margin: 8px 0;
+                color: #555;
+            ">
+                📄 {{ source }} — Page {{ page }}
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
